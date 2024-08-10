@@ -33,7 +33,7 @@ During training it is fine-tuned on a pretrained model. We conduct training, val
 The detection results on the validation set:
 ![val](./media/val_batch0_labels.jpg)
 
-Demonstration:
+### Demonstration:
 ![demo](./media/sample_xy.gif)
 
 
