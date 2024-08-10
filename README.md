@@ -21,13 +21,13 @@ The video contains a total of 1341 frames, we perform data cleansing to manually
 
 We split our data in a 70:30 ratio for our training set and validation set, amounting 97 frames and 41 frames correspondingly. Data augmentation is necessary due to insufficient training samples. We used **Albumentations** to do so, resulting a total of 1261 training samples. The images are resized to $640 \times 640$ to fit the input size requirements of YOLOv8.
 
-Here are some examples of augmented data:
+Here are some examples of the augmented data:
 | Raw Data | Augmented Data |
 | --- | --- |
 | <img src="./media/0020.jpg" alt="20" height="300"> | <img src="./media/0020_8.jpg" alt="20a" height="300"> |
 | <img src="./media/0096.jpg" alt="96" height="300"> | <img src="./media/0096_8.jpg" alt="96a" height="300"> |
 
-YOLOv8 Nano is chosen as the network architecture, as the model is to be deployed on edge devices.
+**YOLOv8 Nano** is chosen as the network architecture, as the model is to be deployed on edge devices.
 During training it is fine-tuned on a pretrained model. We conduct training, validation, and prediction on **Google Colab**.
 
 The detection results on the validation set:
