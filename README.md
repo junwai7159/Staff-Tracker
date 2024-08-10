@@ -77,7 +77,7 @@ model.train(data=dataset_yaml, epochs=epochs, batch=batch, project=project,
             imgsz=640, pretrained=True, augment=True, optimizer='auto', single_cls=True)
 ```
 
-An alternative is to run this command in the CLI with a `yolo` command, check out at [documentation](https://docs.ultralytics.com/usage/cli/)
+An alternative is to run this command in the CLI with a `yolo` command, check out the [official documentation](https://docs.ultralytics.com/usage/cli/).
 ```
 yolo task=detect mode=train model=yolov8n.pt ARGS
 ```
@@ -94,7 +94,7 @@ results = model.track(source='/content/drive/MyDrive/footfallcam/data/sample.mp4
                       tracker='botsort.yaml', project='staff_tracker')
 ```
 
-The final output video (with center_x, center_y) will be saved at `./staff_tracker/track/{video_name}_xy.avi`
+The final output video will be saved at `./staff_tracker/track/{video_name}_xy.avi`. `{video_name}.csv` on the same directory records the coordinates of the staff when present in the clip.
 
 ## ✍️ Authors <a name = "authors"></a>
 - [@junwai7159](https://github.com/junwai7159) - Idea & Initial work
