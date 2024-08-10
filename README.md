@@ -17,29 +17,28 @@ A person is identified as a staff if he or she is wearing a staff name tag.
 ## 💡 Idea / Solution <a name = "idea"></a>
 It is evident that the problem falls in the realm of object detection and tracking. We implemented [YOLOv8 by Ultralytics](https://github.com/ultralytics/ultralytics/tree/main) for object detection, and it supports both BoT-SORT and ByteTrack tracking algorithms. We choose the former for tracking. 
 
-The video contains a total of 1341 frames, we perform data cleansing to manually select frames where the staff badge is visible. After that we annotate our data using **Roboflow**, the classes are "staff" or the background. 
+The video contains a total of 1341 frames, we perform data cleansing to manually select frames where the staff badge is visible. After that we annotate our data using **Roboflow**, the classes are "staff" or the background. 138 frames were selected at last. 
 
 We split our data in a 70:30 ratio for our training set and validation set, amounting 97 frames and 41 frames correspondingly. Data augmentation is necessary due to insufficient training samples. We used **Albumentations** to do so, resulting a total of 1261 training samples. The images are resized to $640 \times 640$ to fit the input size requirements of YOLOv8.
 
 Here are some examples of augmented data:
 | Raw Data | Augmented Data |
 | --- | --- |
-| <img src="./imgs/imgs_aug/train/images/0020.jpg" alt="20" height="300"> | <img src="./imgs/imgs_aug/train/images/0020_8.jpg" alt="20a" height="300"> |
-| <img src="./imgs/imgs_aug/train/images/0096.jpg" alt="96" height="300"> | <img src="./imgs/imgs_aug/train/images/0096_8.jpg" alt="96a" height="300"> |
+| <img src="./media/0020.jpg" alt="20" height="300"> | <img src="./media/0020_8.jpg" alt="20a" height="300"> |
+| <img src="./media/0096.jpg" alt="96" height="300"> | <img src="./media/train/images/0096_8.jpg" alt="96a" height="300"> |
 
-YOLOv8 Nano is chosen as the network architecture, during training it is fine-tuned on a pretrained model. We train it on Google Colab.
+YOLOv8 Nano is chosen as the network architecture, as the model is to be deployed on edge devices.
+During training it is fine-tuned on a pretrained model. We conduct training and prediction on **Google Colab**.
 
 The detection results on the validation set:
-![val](./runs/detect/train/val_batch0_labels.jpg)
+![val](./media/val_batch0_labels.jpg)
 
 The curves:
 ![curve](./runs/detect/train/results.png)
 
-Tracking results:
+Demonstration:
 TO-DO
 
-Heatmap:
-TO-DO
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 ### Prerequisites
@@ -49,22 +48,17 @@ pip install ultralytics albumentation
 ```
 
 ### Data Pre-processing
-Extract the given video into frames. The raw frames will be located at `./imgs/imgs_raw`
+Extract the given video into individual frames. The raw frames will be located at `./imgs/imgs_raw`
 ```
 python ./utils/extract_frames.py
 ```
 
-The cleansed and labelled data using Roboflow is at `./imgs/imgs_aug`. Run the following to rename the files in an orderly manner.
+The cleansed and labelled data using Roboflow is at `./imgs/imgs_annotate`. Run the following to perform K-Fold split and Data Augmentation on the training set.
 ```
-python ./utils/rename_labeling.py
-```
-
-To perform data augmentation on the dataset, run the following:
-```
-python ./utils/data_aug.py
+python ./preprocess.py
 ```
 
-The augmentation pipeline is defined in the function`apply_aug`. The variable `num_aug` is the number of augmentations on a single training sample.
+The augmentation pipeline is defined in the function`augment_img` of `./utils/data_augmentation.py`. The variable `num_aug` is the number of augmentations on a single training sample.
 ```python
   transform = A.Compose([
     A.Rotate(limit=15, p=0.5),
@@ -78,40 +72,37 @@ The augmentation pipeline is defined in the function`apply_aug`. The variable `n
   ], bbox_params=A.BboxParams(format='yolo', label_fields=['labels']))
 ```
 
-
 ## 🎈 Usage <a name="usage"></a>
 ### Train
-To train the model, run the training block in `yolo.ipynb`. 
+To train the model, run `train.ipynb`. 
 ```python
-# Load a pretrained model
-model = YOLO('yolov8n.pt')
-
-epochs = 100
-batch = 16
-# Train the model
-results = model.train(data='/content/drive/MyDrive/imgs_aug/data.yaml', epochs=epochs, batch=batch, imgsz=640,
-                      pretrained=True, optimizer='auto', single_cls=True)
+model.train(data=dataset_yaml, epochs=epochs, batch=batch, project=project,
+            imgsz=640, pretrained=True, augment=True, optimizer='auto', single_cls=True)
 ```
 
 An alternative is to run this command in the Command Line Interface (CLI) with a `yolo` command:
 ```
-yolo task=detect mode=train model=yolov8s.pt data=/content/drive/MyDrive/imgs_aug/data.yaml epochs=50 imgsz=640
+yolo task=detect mode=train model=yolov8n.pt data=dataset_yaml epochs=100 batch=16 imgsz=640
 ```
 
-### Prediction
-For object tracking, run the prediction block in `yolo.ipynb`. 
-```python
-# Load the trained model
-model = YOLO('./runs/detect/train/weights/best.pt')
+By default the weights and results will be saved at `./staff_tracker/train`
 
-# Run inference on the source
-results = model.track(source='./data/sample.mp4', show=True, save=True, tracker='botsort.yaml')
+### Validation
+To conduct K-fold cross validation, run `kfold_cv.ipynb`. The default value of K denoted by variable `ksplit` is 5.
+
+### Prediction
+For object tracking, run `predict.ipynb`. 
+```python
+results = model.track(source='/content/drive/MyDrive/footfallcam/data/sample.mp4', show=True, save=True,
+                      tracker='botsort.yaml', project='staff_tracker')
 ```
 
 Or run this command in your command line.
 ```
-yolo track predict model=/content/runs/detect/train/weights/best.pt source=/content/drive/MyDrive/sample.mp4
+yolo track predict model=/content/staff_tracker/detect/train/weights/best.pt source=/content/drive/MyDrive/sample.mp4
 ```
+
+The final output (with center_x, center_y) will be saved at `./staff_tracker/track/{video_name}_xy.avi`
 
 ## ✍️ Authors <a name = "authors"></a>
 - [@junwai7159](https://github.com/junwai7159) - Idea & Initial work
