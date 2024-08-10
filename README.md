@@ -25,16 +25,13 @@ Here are some examples of augmented data:
 | Raw Data | Augmented Data |
 | --- | --- |
 | <img src="./media/0020.jpg" alt="20" height="300"> | <img src="./media/0020_8.jpg" alt="20a" height="300"> |
-| <img src="./media/0096.jpg" alt="96" height="300"> | <img src="./media/train/images/0096_8.jpg" alt="96a" height="300"> |
+| <img src="./media/0096.jpg" alt="96" height="300"> | <img src="./media/images/0096_8.jpg" alt="96a" height="300"> |
 
 YOLOv8 Nano is chosen as the network architecture, as the model is to be deployed on edge devices.
 During training it is fine-tuned on a pretrained model. We conduct training and prediction on **Google Colab**.
 
 The detection results on the validation set:
 ![val](./media/val_batch0_labels.jpg)
-
-The curves:
-![curve](./runs/detect/train/results.png)
 
 Demonstration:
 TO-DO
