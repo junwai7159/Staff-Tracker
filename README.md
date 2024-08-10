@@ -34,7 +34,7 @@ The detection results on the validation set:
 ![val](./media/val_batch0_labels.jpg)
 
 Demonstration:
-TO-DO
+![demo](./media/sample_xy.gif)
 
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
