@@ -25,10 +25,10 @@ Here are some examples of augmented data:
 | Raw Data | Augmented Data |
 | --- | --- |
 | <img src="./media/0020.jpg" alt="20" height="300"> | <img src="./media/0020_8.jpg" alt="20a" height="300"> |
-| <img src="./media/0096.jpg" alt="96" height="300"> | <img src="./media/images/0096_8.jpg" alt="96a" height="300"> |
+| <img src="./media/0096.jpg" alt="96" height="300"> | <img src="./media/0096_8.jpg" alt="96a" height="300"> |
 
 YOLOv8 Nano is chosen as the network architecture, as the model is to be deployed on edge devices.
-During training it is fine-tuned on a pretrained model. We conduct training and prediction on **Google Colab**.
+During training it is fine-tuned on a pretrained model. We conduct training, validation, and prediction on **Google Colab**.
 
 The detection results on the validation set:
 ![val](./media/val_batch0_labels.jpg)
@@ -77,12 +77,12 @@ model.train(data=dataset_yaml, epochs=epochs, batch=batch, project=project,
             imgsz=640, pretrained=True, augment=True, optimizer='auto', single_cls=True)
 ```
 
-An alternative is to run this command in the Command Line Interface (CLI) with a `yolo` command:
+An alternative is to run this command in the CLI with a `yolo` command, check out at [documentation](https://docs.ultralytics.com/usage/cli/)
 ```
-yolo task=detect mode=train model=yolov8n.pt data=dataset_yaml epochs=100 batch=16 imgsz=640
+yolo task=detect mode=train model=yolov8n.pt ARGS
 ```
 
-By default the weights and results will be saved at `./staff_tracker/train`
+By default the best model weights will be saved at `./staff_tracker/train/weights/best.pt`
 
 ### Validation
 To conduct K-fold cross validation, run `kfold_cv.ipynb`. The default value of K denoted by variable `ksplit` is 5.
@@ -94,12 +94,7 @@ results = model.track(source='/content/drive/MyDrive/footfallcam/data/sample.mp4
                       tracker='botsort.yaml', project='staff_tracker')
 ```
 
-Or run this command in your command line.
-```
-yolo track predict model=/content/staff_tracker/detect/train/weights/best.pt source=/content/drive/MyDrive/sample.mp4
-```
-
-The final output (with center_x, center_y) will be saved at `./staff_tracker/track/{video_name}_xy.avi`
+The final output video (with center_x, center_y) will be saved at `./staff_tracker/track/{video_name}_xy.avi`
 
 ## ✍️ Authors <a name = "authors"></a>
 - [@junwai7159](https://github.com/junwai7159) - Idea & Initial work
